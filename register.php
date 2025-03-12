@@ -2,14 +2,17 @@
 require 'config.php';
 
 $error = '';
+$success = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
+    $role = trim($_POST['role']); // نقش کاربر
 
     // اعتبارسنجی فیلدها
-    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+    if (empty($name) || empty($email) || empty($password) || empty($confirm_password) || empty($role)) {
         $error = 'لطفا تمام فیلدها را پر کنید.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'ایمیل وارد شده معتبر نیست.';
@@ -26,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             // هش کردن پسورد و ذخیره کاربر در دیتابیس
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-            $stmt->execute([$name, $email, $hashed_password]);
-            header('Location: login.php');
-            exit;
+            $stmt = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
+            $stmt->execute([$name, $email, $hashed_password, $role]);
+
+            $success = 'ثبت‌نام شما با موفقیت انجام شد. <a href="login.php">وارد شوید</a>';
         }
     }
 }
@@ -41,13 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ثبت نام</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <h2 class="text-center">ثبت نام</h2>
         <?php if ($error): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="alert alert-success"><?php echo $success; ?></div>
         <?php endif; ?>
         <form method="POST">
             <div class="mb-3">
@@ -61,13 +73,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="mb-3">
                 <label for="password" class="form-label">رمز عبور</label>
                 <input type="password" class="form-control" id="password" name="password" required>
-                <small class="form-text text-muted">
-                    پسورد باید حداقل ۸ کاراکتر و شامل حروف بزرگ، کوچک، عدد و کاراکترهای خاص باشد.
-                </small>
             </div>
             <div class="mb-3">
                 <label for="confirm_password" class="form-label">تکرار رمز عبور</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">نقش</label>
+                <select class="form-control" id="role" name="role" required>
+                    <option value="user">کاربر عادی</option>
+                    <option value="editor">ویرایشگر</option>
+                    <option value="admin">مدیر</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">ثبت نام</button>
         </form>
