@@ -76,6 +76,8 @@ $user = $stmt->fetch();
                 <h5 class="card-title">اطلاعات کاربر</h5>
                 <p class="card-text">نام: <strong><?php echo htmlspecialchars($user['name']); ?></strong></p>
                 <p class="card-text">ایمیل: <strong><?php echo htmlspecialchars($user['email']); ?></strong></p>
+                <p class="card-text">نقش: <strong><?php echo htmlspecialchars($user['role']); ?></strong></p>
+
                 <a href="#" class="btn btn-primary">ویرایش پروفایل</a>
             </div>
         </div>
