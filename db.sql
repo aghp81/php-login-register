@@ -16,4 +16,6 @@ CREATE TABLE password_resets (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE users ADD role ENUM('admin', 'editor', 'user') DEFAULT 'user';
+
 composer require phpmailer/phpmailer
