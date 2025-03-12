@@ -1,15 +1,26 @@
 <?php
-session_start();
+session_start(); // شروع session
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: login.php'); // اگر کاربر وارد نشده باشد، به صفحه لاگین هدایت می‌شود
     exit;
 }
 
 require 'config.php';
 
+// دریافت اطلاعات کاربر فعلی
 $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
 $stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+$current_user = $stmt->fetch();
+
+// بررسی وجود user_role در session
+$user_role = $_SESSION['user_role'] ?? 'user'; // اگر user_role وجود نداشت، مقدار پیش‌فرض 'user' در نظر گرفته می‌شود
+
+// دریافت لیست همه کاربران (فقط برای ادمین)
+$users = [];
+if ($current_user['role'] == 'admin') {
+    $stmt = $pdo->query('SELECT * FROM users');
+    $users = $stmt->fetchAll();
+}
 ?>
 
 <!DOCTYPE html>
@@ -59,9 +70,16 @@ $user = $stmt->fetch();
             <li class="nav-item">
                 <a class="nav-link active" href="#">پروفایل</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">تنظیمات</a>
-            </li>
+            <?php if ($user_role == 'admin'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">مدیریت کاربران</a>
+                </li>
+            <?php endif; ?>
+            <?php if ($current_user['role'] == 'admin' || $current_user['role'] == 'editor'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">مدیریت محتوا</a>
+                </li>
+            <?php endif; ?>
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">خروج</a>
             </li>
@@ -71,16 +89,47 @@ $user = $stmt->fetch();
     <!-- محتوای اصلی -->
     <div class="main-content">
         <h1 class="mb-4">پروفایل کاربری</h1>
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">اطلاعات کاربر</h5>
-                <p class="card-text">نام: <strong><?php echo htmlspecialchars($user['name']); ?></strong></p>
-                <p class="card-text">ایمیل: <strong><?php echo htmlspecialchars($user['email']); ?></strong></p>
-                <p class="card-text">نقش: <strong><?php echo htmlspecialchars($user['role']); ?></strong></p>
-
+                <p class="card-text">نام: <strong><?php echo htmlspecialchars($current_user['name']); ?></strong></p>
+                <p class="card-text">ایمیل: <strong><?php echo htmlspecialchars($current_user['email']); ?></strong></p>
+                <p class="card-text">نقش: <strong><?php echo htmlspecialchars($current_user['role']); ?></strong></p>
                 <a href="#" class="btn btn-primary">ویرایش پروفایل</a>
             </div>
         </div>
+
+        <!-- بخش مدیریت کاربران (فقط برای ادمین) -->
+        <?php if ($current_user['role'] == 'admin'): ?>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">لیست کاربران</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>نام</th>
+                                <th>ایمیل</th>
+                                <th>نقش</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($users as $user): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($user['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                    <td>
+                                        <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-warning">ویرایش</a>
+                                        <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger">حذف</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Bootstrap JS -->
