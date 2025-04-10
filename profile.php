@@ -86,10 +86,11 @@ if ($current_user['role'] == 'admin') {
                 <li class="nav-item">
                     <a class="nav-link" href="#">مدیریت محتوا</a>
                 </li>
-                <li class="nav-item">
+                
+            <?php endif; ?>
+            <li class="nav-item">
                     <a class="nav-link" href="reset_password.php"> تغییر پسورد</a>
                 </li>
-            <?php endif; ?>
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">خروج</a>
             </li>
@@ -131,9 +132,14 @@ if ($current_user['role'] == 'admin') {
                                     <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td>
                                         <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-warning">ویرایش</a>
-                                        <a href="delete_user.php?id=<?= $user['id'] ?>" class="btn btn-danger" onclick="return confirm('آیا مطمئن هستید می‌خواهید این کاربر را حذف کنید؟')">
+                                        <!-- <a href="delete_user.php?id=<?= $user['id'] ?>" class="btn btn-danger" onclick="return confirm('آیا مطمئن هستید می‌خواهید این کاربر را حذف کنید؟')">
+                                            حذف
+                                        </a> -->
+                                        <!-- روش امن تر برای حذف کاربر -->
+                                        <a href="confirm_delete.php?id=<?= $user['id'] ?>" class="btn btn-danger" onclick="return confirm('آیا مطمئن هستید می‌خواهید این کاربر را حذف کنید؟')">
                                             حذف
                                         </a>
+                                        
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
