@@ -25,6 +25,7 @@ if ($current_user['role'] == 'admin') {
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,6 +39,7 @@ if ($current_user['role'] == 'admin') {
         body {
             font-family: 'Vazirmatn', sans-serif;
         }
+
         .sidebar {
             height: 100vh;
             position: fixed;
@@ -47,21 +49,26 @@ if ($current_user['role'] == 'admin') {
             background-color: #343a40;
             padding-top: 20px;
         }
+
         .sidebar a {
             color: #fff;
             padding: 10px 15px;
             text-decoration: none;
             display: block;
         }
+
         .sidebar a:hover {
             background-color: #495057;
         }
+
         .main-content {
-            margin-right: 250px; /* فاصله از سایدبار */
+            margin-right: 250px;
+            /* فاصله از سایدبار */
             padding: 20px;
         }
     </style>
 </head>
+
 <body>
     <!-- سایدبار -->
     <div class="sidebar">
@@ -70,12 +77,12 @@ if ($current_user['role'] == 'admin') {
             <li class="nav-item">
                 <a class="nav-link active" href="#">پروفایل</a>
             </li>
-            <?php if ($user_role == 'admin'): ?>
+            <?php if ($user_role == 'admin') : ?>
                 <li class="nav-item">
                     <a class="nav-link" href="#">مدیریت کاربران</a>
                 </li>
             <?php endif; ?>
-            <?php if ($current_user['role'] == 'admin' || $current_user['role'] == 'editor'): ?>
+            <?php if ($current_user['role'] == 'admin' || $current_user['role'] == 'editor') : ?>
                 <li class="nav-item">
                     <a class="nav-link" href="#">مدیریت محتوا</a>
                 </li>
@@ -103,7 +110,7 @@ if ($current_user['role'] == 'admin') {
         </div>
 
         <!-- بخش مدیریت کاربران (فقط برای ادمین) -->
-        <?php if ($current_user['role'] == 'admin'): ?>
+        <?php if ($current_user['role'] == 'admin') : ?>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">لیست کاربران</h5>
@@ -117,14 +124,16 @@ if ($current_user['role'] == 'admin') {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($users as $user): ?>
+                            <?php foreach ($users as $user) : ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                                     <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td>
                                         <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-warning">ویرایش</a>
-                                        <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger">حذف</a>
+                                        <a href="delete_user.php?id=<?= $user['id'] ?>" class="btn btn-danger" onclick="return confirm('آیا مطمئن هستید می‌خواهید این کاربر را حذف کنید؟')">
+                                            حذف
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -138,4 +147,5 @@ if ($current_user['role'] == 'admin') {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
