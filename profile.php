@@ -79,6 +79,9 @@ if ($current_user['role'] == 'admin') {
                 <li class="nav-item">
                     <a class="nav-link" href="#">مدیریت محتوا</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reset_password.php"> تغییر پسورد</a>
+                </li>
             <?php endif; ?>
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">خروج</a>
